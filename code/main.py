@@ -65,6 +65,7 @@ class Game(object):
             glfw.swap_buffers(self.window)
             # gestion des évènements
             glfw.poll_events()
+            print(glfw.get_time())
     
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'echap'
@@ -78,3 +79,12 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+"""
+### Réponses aux questions
+Q_5 : 
+    En comptant le nombre de ligne pour une seconde, on a 60 images par seconde.
+    Cela correspond à un temps d'affichage de 16.67 ms par image.
+
+"""
