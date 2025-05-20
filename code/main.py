@@ -10,9 +10,11 @@ class Game(object):
 
     def __init__(self):
         self.window = self.init_window()
+        self.color = [1.0, 0.0, 0.0]  # rouge par défaut
         self.init_context()
         self.init_programs()
         self.init_data()
+        
 
 
     def init_window(self):
@@ -46,8 +48,9 @@ class Game(object):
         GL.glEnable(GL.GL_DEPTH_TEST)
 
     def init_programs(self):
-        program = tools.create_program_from_file("code/shader.vert", "code/shader.frag")
-        GL.glUseProgram(program)
+        self.program = tools.create_program_from_file("code/shader.vert", "code/shader.frag")
+        if self.program:
+            GL.glUseProgram(self.program)
 
         pass
         
@@ -90,6 +93,9 @@ class Game(object):
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
+            color_location = GL.glGetUniformLocation(self.program, "uColor")
+            GL.glUniform3fv(color_location, 1, self.color)
+
             # dessin des sommets
             #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
             GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3) #GL_TRIANGLES : rempli le triangle
@@ -111,7 +117,7 @@ class Game(object):
                 print("Pas de variable uniforme : translation")
                 # Modifie la variable pour le programme courant
             
-            GL.glUniform4f(loc, (0.2*time)%2, 0, 0, np.cos(time)) #location, x, y, z, w
+            GL.glUniform4f(loc, 0.2, 0, 0, 0) #location, x, y, z, w
 
 
 
@@ -120,6 +126,14 @@ class Game(object):
         # sortie du programme si appui sur la touche 'echap'
         if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
             glfw.set_window_should_close(win, glfw.TRUE)
+
+        if action == glfw.PRESS:
+            if key == glfw.KEY_R:
+                self.color = [1.0, 0.0, 0.0]
+            elif key == glfw.KEY_G:
+                self.color = [0.0, 1.0, 0.0]
+            elif key == glfw.KEY_B:
+                self.color = [0.0, 0.0, 1.0]
 
 
 def main():
