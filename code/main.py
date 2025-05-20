@@ -110,7 +110,8 @@ class Game(object):
             if loc == -1 :
                 print("Pas de variable uniforme : translation")
                 # Modifie la variable pour le programme courant
-            GL.glUniform4f(loc, -0.5, 0, 0, 0) #location, x, y, z, w
+            
+            GL.glUniform4f(loc, (0.2*time)%2, 0, 0, np.cos(time)) #location, x, y, z, w
 
 
 

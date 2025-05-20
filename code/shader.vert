@@ -9,10 +9,10 @@ void main (void)
 {
   //Coordonnees du sommet
   gl_Position = vec4(position,1.0);
-  gl_Position.x -= 0.2;
-  gl_Position.y -=0.5;
 
   //prendre en compte la translation issue de la variable uniforme dans l’affichage
   gl_Position.x += translation.x;
   gl_Position.y += translation.y;
+  gl_Position.z += translation.z;
+  gl_Position.w += translation.w;
 }
