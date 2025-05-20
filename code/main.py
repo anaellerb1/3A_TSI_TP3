@@ -55,6 +55,15 @@ class Game(object):
         #Création de 3 sommets
         sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0)), np.float32)
 
+        # attribution d'une liste d'etat (1 indique la création d'une seule liste) ´
+        vao = GL.glGenVertexArrays(1)
+        # affectation de la liste d'etat courante
+        GL.glBindVertexArray(vao)
+        # attribution d’un buffer de donnees (1 indique la création d’un seul buffer) ´
+        vbo = GL.glGenBuffers(1)
+        # affectation du buffer courant
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
+
         pass
 
     def run(self):
