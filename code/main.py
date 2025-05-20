@@ -52,6 +52,9 @@ class Game(object):
         pass
         
     def init_data(self):
+        #Création de 3 sommets
+        sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0)), np.float32)
+
         pass
 
     def run(self):
