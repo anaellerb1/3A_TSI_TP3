@@ -63,6 +63,9 @@ class Game(object):
         vbo = GL.glGenBuffers(1)
         # affectation du buffer courant
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
+        # copie des donnees des sommets sur la carte graphique
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets, GL.GL_STATIC_DRAW)
+
 
         pass
 
