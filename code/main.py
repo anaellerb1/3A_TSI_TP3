@@ -57,19 +57,18 @@ class Game(object):
         """
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
-            # choix de la couleur de fond
-            GL.glClearColor(0.8, 1, 0.5, 0.5)
+            # changer la couleur de fond en fonction du temps qui passe
+            time = glfw.get_time()
+            color = np.sin(time)
+            GL.glClearColor(color, 0.5, 0.5, 0.5)
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
             # gestion des évènements
             glfw.poll_events()
-            # changer la couleur de fond en fonction du temps
-            glfw.get_time()
-            if glfw.get_time() % 2:
-                GL.glClearColor(0.5, 0.5, 1, 0.5)
-            #print(glfw.get_time())
+            print("Couleur de fond : ", color)
+            print("Temps écoulé : ", time)
     
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'echap'
