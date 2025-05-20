@@ -89,9 +89,11 @@ class Game(object):
             GL.glClearColor(color, 0.5, 0.5, 0.5)
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-            
+
             # dessin des sommets
-            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3)
+            #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3) #GL_TRIANGLES : rempli le triangle
+            #GL.glDrawArrays(GL.GL_POINTS, 0, 3) #GL_POINTS : ne dessine que les sommets
 
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
