@@ -65,7 +65,11 @@ class Game(object):
             glfw.swap_buffers(self.window)
             # gestion des évènements
             glfw.poll_events()
-            print(glfw.get_time())
+            # changer la couleur de fond en fonction du temps
+            glfw.get_time()
+            if glfw.get_time() % 2:
+                GL.glClearColor(0.5, 0.5, 1, 0.5)
+            #print(glfw.get_time())
     
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'echap'
