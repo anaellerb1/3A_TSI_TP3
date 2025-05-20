@@ -89,6 +89,10 @@ class Game(object):
             GL.glClearColor(color, 0.5, 0.5, 0.5)
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+            
+            # dessin des sommets
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3)
+
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
             # gestion des évènements
