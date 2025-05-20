@@ -66,6 +66,13 @@ class Game(object):
         # copie des donnees des sommets sur la carte graphique
         GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets, GL.GL_STATIC_DRAW)
 
+        # Les deux commandes suivantes sont stockees dans l' ´ etat du vao courant ´
+        # Active l'utilisation des donnees de positions ´
+        # (le 0 correspond a la location dans le vertex shader) `
+        GL.glEnableVertexAttribArray(0)
+        # Indique comment le buffer courant (dernier vbo "binde") ´
+        # est utilise pour les positions des sommets ´
+        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
 
         pass
 
