@@ -101,6 +101,19 @@ class Game(object):
             glfw.poll_events()
             #print("Couleur de fond : ", color)
             #print("Temps écoulé : ", time)
+
+            # Recup ´ ere l'identifiant du programme courant `
+            prog = GL.glGetIntegerv(GL.GL_CURRENT_PROGRAM)
+            # Recup ´ ere l'identifiant de la variable translation dans le programme courant `
+            loc = GL.glGetUniformLocation(prog, "translation")
+            # Verifie que la variable existe ´
+            if loc == -1 :
+                print("Pas de variable uniforme : translation")
+                # Modifie la variable pour le programme courant
+            GL.glUniform4f(loc, -0.5, 0, 0, 0) #location, x, y, z, w
+
+
+
     
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'echap'
