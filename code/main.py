@@ -15,6 +15,9 @@ class Game(object):
         self.color = [1.0, 0.0, 0.0]  # rouge par défaut
         self.translation = [0.0, 0.0]
         
+        self.x = 0
+        self.y = 0
+        self.z = 0
         self.i = 0
         self.j = 0
         self.k = 0
@@ -141,22 +144,21 @@ class Game(object):
 
             # Recupère l'identifiant du programme courant
             prog = GL.glGetIntegerv(GL.GL_CURRENT_PROGRAM)
-            # Recupère l'identifiant de la variable translation dans le programme courant `
-            loc = GL.glGetUniformLocation(prog, "translation")
-
-            # Verifie que la variable existe ´
-            if loc == -1 :
-                print("Pas de variable uniforme : translation")
-                # Modifie la variable pour le programme courant
-            
-            GL.glUniform4f(loc, self.translation[0], self.translation[1], 0.0, 1.0)
-
 
             loc = GL.glGetUniformLocation(prog, "rotation")
             if loc == -1 :
                 print("Pas de variable uniforme : rotation")
                 # Modifie la variable pour le programme courant
             GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, rotation)
+
+            loc = GL.glGetUniformLocation(prog, "translation")
+            if loc == -1 :
+                print("Pas de variable uniforme : translation")            
+            GL.glUniform4f(loc, self.translation[0], self.translation[1], 0.0, 1.0)
+
+            loc = GL.glGetUniformLocation(prog, "projection")
+            if loc == -1 :
+                print("Pas de variable uniforme : projection")
 
 
     

@@ -1,14 +1,11 @@
-#version 330 core
+#version 130
 
-// Variable d'entrée, ici la position
-layout (location = 0) in vec3 position;
+in vec3 position;
 
-//Un Vertex Shader minimaliste
-uniform vec4 translation;
 uniform mat4 rotation;
-void main (void)
-{
-  //Coordonnees du sommet
-  gl_Position = rotation * vec4(position, 1.0) + translation;
+uniform vec4 translation;
+uniform mat4 projection;
 
+void main() {
+    gl_Position = projection * (rotation * vec4(position, 1.0) + translation);
 }
