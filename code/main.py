@@ -14,13 +14,14 @@ class Game(object):
 
         self.color = [1.0, 0.0, 0.0]  # rouge par défaut
         self.translation = [0.0, 0.0]
-        
-        self.x = 0
-        self.y = 0
-        self.z = 0
+
+        #rotation
         self.i = 0
         self.j = 0
         self.k = 0
+
+        #projection
+        self.fov = 45
 
         self.init_context()
         self.init_programs()
@@ -133,6 +134,15 @@ class Game(object):
             yrotation = pyrr.matrix44.create_from_y_rotation(self.j)
             rotation = xrotation @ yrotation
 
+            #touches de zoom/projection
+            if glfw.get_key(self.window, glfw.KEY_Y) == glfw.PRESS: 
+                self.fov += 0.1
+            if glfw.get_key(self.window, glfw.KEY_H) == glfw.PRESS:
+                self.fov -= 0.1
+
+            projection = pyrr.matrix44.create_perspective_projection_matrix(self.fov, 1.0, 0.1, -5) #(angle, rapport d'aspect, proche, loin) avec  z = -5
+
+
             GL.glUniform3fv(color_location, 1, self.color)
 
             ## dessin des sommets
@@ -159,6 +169,8 @@ class Game(object):
             loc = GL.glGetUniformLocation(prog, "projection")
             if loc == -1 :
                 print("Pas de variable uniforme : projection")
+            GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, projection)
+            
 
 
     
@@ -192,6 +204,6 @@ Q_5 :
     Cela correspond à un temps d'affichage de 16.67 ms par image.
 
 Q_25 : 
-    L’opération mathématique principale est la division par w (division perspective) suivie d’un changement d’échelle pour passer de [-1, 1] à [0, width/height].
+    L’opération mathematique principale est la division par w (division perspective) suivie d’un changement d’échelle pour passer de [-1, 1] à [0, width/height].
 
 """
