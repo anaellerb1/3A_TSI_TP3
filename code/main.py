@@ -123,4 +123,7 @@ Q_5 :
     En comptant le nombre de ligne pour une seconde, on a 60 images par seconde.
     Cela correspond à un temps d'affichage de 16.67 ms par image.
 
+Q_25 : 
+    L’opération mathématique principale est la division par w (division perspective) suivie d’un changement d’échelle pour passer de [-1, 1] à [0, width/height].
+
 """
