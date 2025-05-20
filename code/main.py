@@ -15,6 +15,11 @@ class Game(object):
 
 
     def init_window(self):
+        """ 
+        création de la fenêtre et initialisation de la librairie glfw et du contexte opengl associé
+
+        :return: la fenêtre créée
+        """
         # initialisation de la librairie glfw et du context opengl associé
         glfw.init()
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
@@ -29,6 +34,10 @@ class Game(object):
         return window
 
     def init_context(self):
+        """
+        initialisation du contexte opengl associé à la fenêtre
+        :return: None
+        """
         # activation du context OpenGL pour la fenêtre
         glfw.make_context_current(self.window)
         glfw.swap_interval(1)
@@ -42,6 +51,10 @@ class Game(object):
         pass
 
     def run(self):
+        """
+        boucle principale du programme : affichage et gestion des évènements
+        :return: None
+        """
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
             # choix de la couleur de fond
