@@ -8,7 +8,8 @@ uniform vec4 translation;
 void main (void)
 {
   //Coordonnees du sommet
-  gl_Position = vec4(position,1.0);
+  gl_Position = vec4(position, 1.0) + translation;
+
 
   //prendre en compte la translation issue de la variable uniforme dans l’affichage
   gl_Position.x += translation.x;

@@ -11,6 +11,7 @@ class Game(object):
     def __init__(self):
         self.window = self.init_window()
         self.color = [1.0, 0.0, 0.0]  # rouge par défaut
+        self.translation = [0.0, 0.0, 0.0, 0.0]
         self.init_context()
         self.init_programs()
         self.init_data()
@@ -94,6 +95,21 @@ class Game(object):
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             color_location = GL.glGetUniformLocation(self.program, "uColor")
+
+            # vitesse de déplacement
+            speed = 0.01
+
+            # touches directionnelles
+            if glfw.get_key(self.window, glfw.KEY_LEFT) == glfw.PRESS:
+                self.translation[0] -= speed
+            if glfw.get_key(self.window, glfw.KEY_RIGHT) == glfw.PRESS:
+                self.translation[0] += speed
+            if glfw.get_key(self.window, glfw.KEY_UP) == glfw.PRESS:
+                self.translation[1] += speed
+            if glfw.get_key(self.window, glfw.KEY_DOWN) == glfw.PRESS:
+                self.translation[1] -= speed
+
+            
             GL.glUniform3fv(color_location, 1, self.color)
 
             # dessin des sommets
@@ -117,7 +133,7 @@ class Game(object):
                 print("Pas de variable uniforme : translation")
                 # Modifie la variable pour le programme courant
             
-            GL.glUniform4f(loc, 0.2, 0, 0, 0) #location, x, y, z, w
+            GL.glUniform4f(loc, self.translation[0], self.translation[1], 0.0, 1.0)
 
 
 
