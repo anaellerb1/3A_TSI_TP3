@@ -5,6 +5,7 @@ import glfw
 import numpy as np
 import tools 
 import pyrr
+from ctypes import sizeof, c_float, c_void_p
 
 class Game(object):
     """ fenêtre GLFW avec openGL """
@@ -70,8 +71,14 @@ class Game(object):
         pass
         
     def init_data(self):
-        sommets = np.array(((0, 0, 0),(1, 0, 0), (0, 1, 0), (0, 0, 1)), np.float32)
+        #sommets = np.array(((0, 0, 0),(1, 0, 0), (0, 1, 0), (0, 0, 1)), np.float32)
+        sommets = np.array(((0, 0, 0),(0, 0, 0),
+                        (1, 0, 0), (0, 0, 0),
+                        (0, 1, 0),(0, 0, 0),
+                        (0, 0, 1) ,(0, 0, 0)), np.float32)
 
+
+        stride = 6 * sizeof(c_float)
         index = np.array(((0, 1, 2), (0, 1, 3)), np.uint32)
 
         # 1. Créer le VAO
@@ -82,12 +89,16 @@ class Game(object):
         vbo = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
         GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets, GL.GL_STATIC_DRAW)
-
-        # 3. Activer l'attribut position (location = 0)
+             
+        # 3. Activer l'attribut position (location=0)
         GL.glEnableVertexAttribArray(0)
-        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
+        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(0))
 
-        # 4. Créer le VBO d'indices
+        # 4. Activer l'attribut normale (location=1)
+        GL.glEnableVertexAttribArray(1)
+        GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(3 * sizeof(c_float)))
+
+        # 5. Créer le VBO d'indices
         vboi = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi)
         GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index, GL.GL_STATIC_DRAW)
