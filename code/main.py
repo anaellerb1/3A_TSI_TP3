@@ -82,11 +82,19 @@ class Game(object):
         n3 = (-0.5774, -0.5774, -0.5774)
         n4 = (-0.5, -0.5, 0.707)    
 
-        sommets = np.array((p1, n1, p2, n2, p3, n3, p4, n4), dtype=np.float32)
+        rouge = (1, 0, 0)
+        vert = (0, 1, 0)
+        bleu = (0, 0, 1)
+        jaune = (1, 1, 0)
+
+        sommets = np.array((p1, n1, rouge,
+                            p2, n2, vert,
+                            p3, n3, bleu,
+                            p4, n4, jaune), dtype=np.float32)
 
         index = np.array(((0, 1, 2),(1, 3, 2),), dtype=np.uint32)
         
-        stride = 6 * sizeof(c_float)
+        stride = 9 * sizeof(c_float)
        
 
         # 1. Créer le VAO
@@ -106,7 +114,11 @@ class Game(object):
         GL.glEnableVertexAttribArray(1)
         GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(3 * sizeof(c_float)))
 
-        # 5. Créer le VBO d'indices
+        # 5. Attribut couleur (location = 2)
+        GL.glEnableVertexAttribArray(2)
+        GL.glVertexAttribPointer(2, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(6 * sizeof(c_float)))
+
+        # 6. Créer le VBO d'indices
         vboi = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi)
         GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index, GL.GL_STATIC_DRAW)
@@ -195,12 +207,11 @@ class Game(object):
                 # Modifie la variable pour le programme courant
             GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, rotation)
 
-                      ## dessin des sommets
+            ## dessin des sommets
             #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
             #GL.glDrawArrays(GL.GL_TRIANGLES, 0, 6)
             GL.glDrawElements(GL.GL_TRIANGLES, 2*3, GL.GL_UNSIGNED_INT, None)
-
-
+            
             glfw.swap_buffers(self.window)
             glfw.poll_events()
 

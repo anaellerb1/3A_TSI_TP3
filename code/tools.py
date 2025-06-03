@@ -39,10 +39,10 @@ def create_program(vertex_source, fragment_source):
 
 def create_program_from_file(vs_file, fs_file):
     # création d'un programme GPU à partir de fichiers
-    vs_content = open(vs_file, 'r').read() if os.path.exists(vs_file) \
+    vs_content = open(vs_file, 'r',  encoding='utf-8').read() if os.path.exists(vs_file) \
         else print(f'{25*"-"}\nError reading file:\n{vs_file}\n{25*"-"}')
 
-    fs_content = open(fs_file, 'r').read() if os.path.exists(fs_file) \
+    fs_content = open(fs_file, 'r', encoding='utf-8').read() if os.path.exists(fs_file) \
         else print(f'{25*"-"}\nError reading file:\n{fs_file}\n{25*"-"}')
 
     return create_program(vs_content, fs_content)
