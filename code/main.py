@@ -14,6 +14,8 @@ class Game(object):
 
         self.color = [1.0, 0.0, 0.0]  # rouge par défaut
         self.translation = [0.0, 0.0]
+        self.fov = 50.0 
+
         
         self.i = 0
         self.j = 0
@@ -79,9 +81,9 @@ class Game(object):
 
         # Les deux commandes suivantes sont stockees dans l' ´ etat du vao courant ´
         # Active l'utilisation des donnees de positions ´
-        # (le 0 correspond a la location dans le vertex shader) `
+        # (le 0 correspond a la location dans le vertex shader)
         GL.glEnableVertexAttribArray(0)
-        # Indique comment le buffer courant (dernier vbo "binde") ´
+        # Indique comment le buffer courant (dernier vbo "binde")
         # est utilise pour les positions des sommets ´
         GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
 
@@ -141,15 +143,25 @@ class Game(object):
 
             # Recupère l'identifiant du programme courant
             prog = GL.glGetIntegerv(GL.GL_CURRENT_PROGRAM)
-            # Recupère l'identifiant de la variable translation dans le programme courant `
-            loc = GL.glGetUniformLocation(prog, "translation")
+            
 
-            # Verifie que la variable existe ´
+            
+            ratio = 1
+            near = 0.5
+            far = 10
+            projection = pyrr.matrix44.create_perspective_projection_matrix(self.fov, ratio, near, far)
+
+            loc = GL.glGetUniformLocation(prog, "projection")
+            if loc == -1:
+                print("Pas de variable uniforme : projection")
+            GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, projection)
+
+
+            loc = GL.glGetUniformLocation(prog, "translation")
             if loc == -1 :
                 print("Pas de variable uniforme : translation")
                 # Modifie la variable pour le programme courant
-            
-            GL.glUniform4f(loc, self.translation[0], self.translation[1], 0.0, 1.0)
+            GL.glUniform4f(loc, self.translation[0], self.translation[1], 0, 1)
 
 
             loc = GL.glGetUniformLocation(prog, "rotation")
