@@ -70,8 +70,9 @@ class Game(object):
         
     def init_data(self):
         #Création de 3 sommets
-        sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0)), np.float32)
         #sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0)), np.float32)
+        sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 0), (1, 0, 0), (0, 0, 1)), np.float32)
+
 
 
         # attribution d'une liste d'etat (1 indique la création d'une seule liste) ´
@@ -179,7 +180,8 @@ class Game(object):
 
                       ## dessin des sommets
             #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
-            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3) #GL_TRIANGLES : rempli le triangle
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 6)
+
 
             glfw.swap_buffers(self.window)
             glfw.poll_events()
