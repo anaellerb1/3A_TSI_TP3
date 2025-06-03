@@ -13,8 +13,11 @@ class Game(object):
         self.window = self.init_window()
 
         self.color = [1.0, 0.0, 0.0]  # rouge par défaut
-        self.translation = [0.0, 0.0]
         self.fov = 50.0 
+
+        self.x = 0.0
+        self.y = 0.0
+        self.z = -5
 
         
         self.i = 0
@@ -96,7 +99,7 @@ class Game(object):
         """
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
-            speed = 0.01
+            speed = 0.1
 
             # changer la couleur de fond en fonction du temps qui passe
             time = glfw.get_time()
@@ -109,25 +112,32 @@ class Game(object):
 
             # touches directionnelles
             if glfw.get_key(self.window, glfw.KEY_LEFT) == glfw.PRESS:
-                self.translation[0] -= speed
+                self.x -= speed
             if glfw.get_key(self.window, glfw.KEY_RIGHT) == glfw.PRESS:
-                self.translation[0] += speed
+                self.x += speed
             if glfw.get_key(self.window, glfw.KEY_UP) == glfw.PRESS:
-                self.translation[1] += speed
+                self.y += speed
             if glfw.get_key(self.window, glfw.KEY_DOWN) == glfw.PRESS:
-                self.translation[1] -= speed
+                self.y -= speed
 
 
             # touches de rotation
             if glfw.get_key(self.window, glfw.KEY_I) == glfw.PRESS:
-                self.i += 0.1
+                self.i += speed
             if glfw.get_key(self.window, glfw.KEY_J) == glfw.PRESS:
-                self.i -= 0.1
+                self.i -= speed
             if glfw.get_key(self.window, glfw.KEY_K) == glfw.PRESS:
-                self.j += 0.1
+                self.j += speed
             if glfw.get_key(self.window, glfw.KEY_L) == glfw.PRESS:
-                self.j -= 0.1
+                self.j -= speed
 
+            
+            # touches de profondeur
+            if glfw.get_key(self.window, glfw.KEY_Y) == glfw.PRESS:
+                self.z += speed
+            if glfw.get_key(self.window, glfw.KEY_H) == glfw.PRESS:
+                self.z -= speed
+            
             xrotation = pyrr.matrix44.create_from_x_rotation(self.i)
             yrotation = pyrr.matrix44.create_from_y_rotation(self.j)
             rotation = xrotation @ yrotation
@@ -161,7 +171,7 @@ class Game(object):
             if loc == -1 :
                 print("Pas de variable uniforme : translation")
                 # Modifie la variable pour le programme courant
-            GL.glUniform4f(loc, self.translation[0], self.translation[1], 0, 1)
+            GL.glUniform4f(loc, self.x, self.y, self.z, 1.0)
 
 
             loc = GL.glGetUniformLocation(prog, "rotation")
@@ -184,6 +194,12 @@ class Game(object):
                 self.color = [0.0, 1.0, 0.0]
             elif key == glfw.KEY_B:
                 self.color = [0.0, 0.0, 1.0]
+            elif key == glfw.KEY_SPACE:
+                self.translation = [0.0, 0.0]
+                self.i = 0.0
+                self.j = 0.0
+                self.fov = 50.0
+
 
 
 def main():
