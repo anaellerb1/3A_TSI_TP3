@@ -60,6 +60,7 @@ class Game(object):
         glfw.swap_interval(1)
         # activation de la gestion de la profondeur
         GL.glEnable(GL.GL_DEPTH_TEST)
+        #GL.glDisable(GL.GL_DEPTH_TEST)
 
     def init_programs(self):
         self.program = tools.create_program_from_file("code/shader.vert", "code/shader.frag")
@@ -90,7 +91,7 @@ class Game(object):
         vboi = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi)
         GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index, GL.GL_STATIC_DRAW)
-        
+
         pass
 
     def run(self):
