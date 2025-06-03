@@ -22,6 +22,7 @@ class Game(object):
         
         self.i = 0
         self.j = 0
+
         self.k = 0
 
         self.init_context()
@@ -70,6 +71,8 @@ class Game(object):
     def init_data(self):
         #Création de 3 sommets
         sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0)), np.float32)
+        #sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0)), np.float32)
+
 
         # attribution d'une liste d'etat (1 indique la création d'une seule liste) ´
         vao = GL.glGenVertexArrays(1)
@@ -144,13 +147,7 @@ class Game(object):
 
             GL.glUniform3fv(color_location, 1, self.color)
 
-            ## dessin des sommets
-            #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
-            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3) #GL_TRIANGLES : rempli le triangle
-
-            glfw.swap_buffers(self.window)
-            glfw.poll_events()
-
+  
             # Recupère l'identifiant du programme courant
             prog = GL.glGetIntegerv(GL.GL_CURRENT_PROGRAM)
             
@@ -180,6 +177,12 @@ class Game(object):
                 # Modifie la variable pour le programme courant
             GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, rotation)
 
+                      ## dessin des sommets
+            #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3) #GL_TRIANGLES : rempli le triangle
+
+            glfw.swap_buffers(self.window)
+            glfw.poll_events()
 
     
     def key_callback(self, win, key, scancode, action, mods):
@@ -200,6 +203,8 @@ class Game(object):
                 self.j = 0.0
                 self.fov = 50.0
 
+        
+
 
 
 def main():
@@ -209,6 +214,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 """

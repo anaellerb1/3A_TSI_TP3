@@ -11,6 +11,6 @@ uniform mat4 projection;
 void main (void)
 {
   //Coordonnees du sommet
-  gl_Position = projection * rotation * vec4(position, 1.0) + translation;
+  gl_Position = projection * (rotation * vec4(position, 1.0) + translation);
 
 }
