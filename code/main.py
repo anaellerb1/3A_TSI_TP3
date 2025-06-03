@@ -64,7 +64,7 @@ class Game(object):
         #GL.glDisable(GL.GL_DEPTH_TEST)
 
     def init_programs(self):
-        self.program = tools.create_program_from_file("code/shader.vert", "code/shader.frag")
+        self.program = tools.create_program_from_file("code/phong.vert", "code/phong.frag")
         if self.program:
             GL.glUseProgram(self.program)
 
@@ -72,14 +72,22 @@ class Game(object):
         
     def init_data(self):
         #sommets = np.array(((0, 0, 0),(1, 0, 0), (0, 1, 0), (0, 0, 1)), np.float32)
-        sommets = np.array(((0, 0, 0),(0, 0, 0),
-                        (1, 0, 0), (0, 0, 0),
-                        (0, 1, 0),(0, 0, 0),
-                        (0, 0, 1) ,(0, 0, 0)), np.float32)
+        p1 = (0, 0, 0)
+        p2 = (1, 0, 0)
+        p3 = (0, 1, 0)
+        p4 = (0, 0, 1)
 
+        n1 = (0.0, 0.0, 1.0)
+        n2 = (-0.5774, -0.5774, -0.5774)
+        n3 = (-0.5774, -0.5774, -0.5774)
+        n4 = (-0.5, -0.5, 0.707)    
 
+        sommets = np.array((p1, n1, p2, n2, p3, n3, p4, n4), dtype=np.float32)
+
+        index = np.array(((0, 1, 2),(1, 3, 2),), dtype=np.uint32)
+        
         stride = 6 * sizeof(c_float)
-        index = np.array(((0, 1, 2), (0, 1, 3)), np.uint32)
+       
 
         # 1. Créer le VAO
         vao = GL.glGenVertexArrays(1)
