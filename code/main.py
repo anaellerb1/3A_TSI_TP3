@@ -69,31 +69,28 @@ class Game(object):
         pass
         
     def init_data(self):
-        #Création de 3 sommets
-        #sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0)), np.float32)
-        sommets = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 0), (1, 0, 0), (0, 0, 1)), np.float32)
+        sommets = np.array(((0, 0, 0),(1, 0, 0), (0, 1, 0), (0, 0, 1)), np.float32)
 
+        index = np.array(((0, 1, 2), (0, 1, 3)), np.uint32)
 
-
-        # attribution d'une liste d'etat (1 indique la création d'une seule liste) ´
+        # 1. Créer le VAO
         vao = GL.glGenVertexArrays(1)
-        # affectation de la liste d'etat courante
         GL.glBindVertexArray(vao)
-        # attribution d’un buffer de donnees (1 indique la création d’un seul buffer) ´
+
+        # 2. Créer le VBO (positions)
         vbo = GL.glGenBuffers(1)
-        # affectation du buffer courant
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
-        # copie des donnees des sommets sur la carte graphique
         GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets, GL.GL_STATIC_DRAW)
 
-        # Les deux commandes suivantes sont stockees dans l' ´ etat du vao courant ´
-        # Active l'utilisation des donnees de positions ´
-        # (le 0 correspond a la location dans le vertex shader)
+        # 3. Activer l'attribut position (location = 0)
         GL.glEnableVertexAttribArray(0)
-        # Indique comment le buffer courant (dernier vbo "binde")
-        # est utilise pour les positions des sommets ´
         GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
 
+        # 4. Créer le VBO d'indices
+        vboi = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi)
+        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index, GL.GL_STATIC_DRAW)
+        
         pass
 
     def run(self):
@@ -180,7 +177,8 @@ class Game(object):
 
                       ## dessin des sommets
             #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
-            GL.glDrawArrays(GL.GL_TRIANGLES, 0, 6)
+            #GL.glDrawArrays(GL.GL_TRIANGLES, 0, 6)
+            GL.glDrawElements(GL.GL_TRIANGLES, 2*3, GL.GL_UNSIGNED_INT, None)
 
 
             glfw.swap_buffers(self.window)
