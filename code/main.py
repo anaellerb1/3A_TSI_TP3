@@ -239,6 +239,9 @@ class Game(object):
             GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, rotation)
             GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None)
 
+            # Objet 3: statique (fait office de sol)
+            
+
 
 
             ## dessin des sommets
