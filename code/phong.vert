@@ -3,6 +3,7 @@
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normale;
 layout (location = 2) in vec3 color;
+layout (location = 3) in vec2 uv;     
 
 uniform vec4 translation;
 uniform mat4 rotation;
@@ -12,6 +13,7 @@ out vec3 coordonnee_3d;
 out vec3 coordonnee_3d_locale;
 out vec3 vnormale;
 out vec3 v_color;
+out vec2 frag_uv; 
 
 //Un Vertex Shader minimaliste
 void main (void)
@@ -35,4 +37,7 @@ void main (void)
 
   //couleur du vecteur
   v_color = color;
+
+  //valeur de frag_uv
+  frag_uv = uv;
 }

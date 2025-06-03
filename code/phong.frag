@@ -7,6 +7,9 @@ in vec3 coordonnee_3d;
 in vec3 coordonnee_3d_locale;
 in vec3 vnormale;
 in vec3 v_color;
+in vec2 frag_uv;
+
+uniform sampler2D texture0;
 
 vec3 light = vec3(0.5,0.5,5.0);
 
@@ -23,9 +26,11 @@ void main (void)
   float ambiant  = 0.2;
 
   vec4 white = vec4(1.0,1.0,1.0,0.0);
-  vec4 color_final = vec4(v_color, 1.0); // ← couleur venant du sommet
 
+  vec4 color_texture = texture(texture0, frag_uv);
+  vec4 color_final = color_texture;
 
-  color = (ambiant+diffuse)*color_final+specular*white;
+  color = (ambiant + diffuse) * color_texture + specular * vec4(1.0);
+
 
 }

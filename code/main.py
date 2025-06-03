@@ -6,6 +6,7 @@ import numpy as np
 import tools 
 import pyrr
 from ctypes import sizeof, c_float, c_void_p
+from PIL import Image
 
 class Game(object):
     """ fenêtre GLFW avec openGL """
@@ -28,9 +29,10 @@ class Game(object):
 
         self.init_context()
         self.init_programs()
-        self.init_data()
-        
 
+        self.texture = self.load_texture("texture/texture1.jpg")
+
+        self.init_data()
 
     def init_window(self):
         """ 
@@ -71,31 +73,41 @@ class Game(object):
         pass
         
     def init_data(self):
-        #sommets = np.array(((0, 0, 0),(1, 0, 0), (0, 1, 0), (0, 0, 1)), np.float32)
+        #sommets
         p1 = (0, 0, 0)
         p2 = (1, 0, 0)
         p3 = (0, 1, 0)
         p4 = (0, 0, 1)
 
+        #normales
         n1 = (0.0, 0.0, 1.0)
         n2 = (-0.5774, -0.5774, -0.5774)
         n3 = (-0.5774, -0.5774, -0.5774)
         n4 = (-0.5, -0.5, 0.707)    
 
+        # couleurs
         rouge = (1, 0, 0)
         vert = (0, 1, 0)
         bleu = (0, 0, 1)
         jaune = (1, 1, 0)
 
-        sommets = np.array((p1, n1, rouge,
-                            p2, n2, vert,
-                            p3, n3, bleu,
-                            p4, n4, jaune), dtype=np.float32)
+        #uv (les coordonnées de texture)
+        uv0, uv1, uv2, uv3 = np.array((0, 0), np.float32), np.array((1, 0), np.float32), np.array((0, 1), np.float32), np.array((1, 1), np.float32)
+
+
+        sommets = np.array([
+                *p1, *n1, *rouge, *uv0,
+                *p2, *n2, *vert,  *uv1,
+                *p3, *n3, *bleu,  *uv2,
+                *p4, *n4, *jaune, *uv3], dtype=np.float32)
+
 
         index = np.array(((0, 1, 2),(1, 3, 2),), dtype=np.uint32)
         
-        stride = 9 * sizeof(c_float)
+        # stride : nombre d'octets entre le début de deux sommets consécutifs
+        stride = 11 * sizeof(c_float)
        
+        
 
         # 1. Créer le VAO
         vao = GL.glGenVertexArrays(1)
@@ -106,17 +118,21 @@ class Game(object):
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
         GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets, GL.GL_STATIC_DRAW)
              
-        # 3. Activer l'attribut position (location=0)
+        # 3. Activer l'attribut position (location = 0)
         GL.glEnableVertexAttribArray(0)
         GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(0))
 
-        # 4. Activer l'attribut normale (location=1)
+        # 4. Activer l'attribut normale (location = 1)
         GL.glEnableVertexAttribArray(1)
         GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(3 * sizeof(c_float)))
 
         # 5. Attribut couleur (location = 2)
         GL.glEnableVertexAttribArray(2)
         GL.glVertexAttribPointer(2, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(6 * sizeof(c_float)))
+
+        # 5. Attribut UV (location = 3)
+        GL.glEnableVertexAttribArray(3)
+        GL.glVertexAttribPointer(3, 2, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(9 * sizeof(c_float)))
 
         # 6. Créer le VBO d'indices
         vboi = GL.glGenBuffers(1)
@@ -204,18 +220,25 @@ class Game(object):
             loc = GL.glGetUniformLocation(prog, "rotation")
             if loc == -1 :
                 print("Pas de variable uniforme : rotation")
-                # Modifie la variable pour le programme courant
             GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, rotation)
+
+            GL.glActiveTexture(GL.GL_TEXTURE0)
+            GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture)
+
+            # Envoie l’indice 0 dans le sampler du shader
+            loc = GL.glGetUniformLocation(self.program, "texture0")
+            if loc == -1 :
+                print("Pas de variable uniforme : texture")
+            GL.glUniform1i(loc, 0)
+
 
             ## dessin des sommets
             #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
             #GL.glDrawArrays(GL.GL_TRIANGLES, 0, 6)
             GL.glDrawElements(GL.GL_TRIANGLES, 2*3, GL.GL_UNSIGNED_INT, None)
-            
             glfw.swap_buffers(self.window)
             glfw.poll_events()
 
-    
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'echap'
         if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
@@ -229,12 +252,31 @@ class Game(object):
             elif key == glfw.KEY_B:
                 self.color = [0.0, 0.0, 1.0]
             elif key == glfw.KEY_SPACE:
-                self.translation = [0.0, 0.0]
+                self.translation = [0.0, 0.0]   
                 self.i = 0.0
                 self.j = 0.0
                 self.fov = 50.0
 
-        
+    def load_texture(self, path):
+        image = Image.open(path).transpose(Image.FLIP_TOP_BOTTOM).convert("RGB")
+        img_data = np.array(image, dtype=np.uint8)
+
+        texture_id = GL.glGenTextures(1)
+        GL.glBindTexture(GL.GL_TEXTURE_2D, texture_id)
+
+        GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB,
+                        image.width, image.height, 0,
+                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, img_data)
+
+        GL.glGenerateMipmap(GL.GL_TEXTURE_2D)
+
+        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT)
+        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT)
+        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
+        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
+
+        return texture_id
+     
 
 
 
