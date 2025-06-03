@@ -154,9 +154,9 @@ class Game(object):
             time = glfw.get_time()
             color = np.sin(time)
             GL.glClearColor(color, 0.5, 0.5, 0.5)
+
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-
             color_location = GL.glGetUniformLocation(self.program, "uColor")
 
             # touches directionnelles
@@ -191,6 +191,7 @@ class Game(object):
             yrotation = pyrr.matrix44.create_from_y_rotation(self.j)
             rotation = xrotation @ yrotation
 
+
             GL.glUniform3fv(color_location, 1, self.color)
 
   
@@ -198,38 +199,46 @@ class Game(object):
             prog = GL.glGetIntegerv(GL.GL_CURRENT_PROGRAM)
             
 
-            
-            ratio = 1
-            near = 0.5
-            far = 10
-            projection = pyrr.matrix44.create_perspective_projection_matrix(self.fov, ratio, near, far)
+            projection = pyrr.matrix44.create_perspective_projection_matrix(self.fov, 1, 0.5, 10)
 
-            loc = GL.glGetUniformLocation(prog, "projection")
-            if loc == -1:
+            loc_proj = GL.glGetUniformLocation(prog, "projection")
+            if loc_proj == -1:
                 print("Pas de variable uniforme : projection")
-            GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, projection)
+            GL.glUniformMatrix4fv(loc_proj, 1, GL.GL_FALSE, projection)
 
 
-            loc = GL.glGetUniformLocation(prog, "translation")
-            if loc == -1 :
+            loc_trans = GL.glGetUniformLocation(prog, "translation")
+            if loc_trans == -1 :
                 print("Pas de variable uniforme : translation")
                 # Modifie la variable pour le programme courant
-            GL.glUniform4f(loc, self.x, self.y, self.z, 1.0)
+            GL.glUniform4f(loc_trans, self.x, self.y, self.z, 1.0)
 
 
-            loc = GL.glGetUniformLocation(prog, "rotation")
-            if loc == -1 :
+            loc_rot = GL.glGetUniformLocation(prog, "rotation")
+            if loc_rot  == -1 :
                 print("Pas de variable uniforme : rotation")
-            GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, rotation)
+            GL.glUniformMatrix4fv(loc_rot , 1, GL.GL_FALSE, rotation)
 
             GL.glActiveTexture(GL.GL_TEXTURE0)
             GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture)
 
             # Envoie l’indice 0 dans le sampler du shader
-            loc = GL.glGetUniformLocation(self.program, "texture0")
-            if loc == -1 :
+            loc_tex = GL.glGetUniformLocation(self.program, "texture0")
+            if loc_tex  == -1 :
                 print("Pas de variable uniforme : texture")
-            GL.glUniform1i(loc, 0)
+            GL.glUniform1i(loc_tex , 0)
+
+            # Objet 1
+            GL.glUniform4f(loc_trans, self.x, self.y, self.z, 1.0)
+            GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, rotation)
+            GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None)
+
+            # Objet 2 
+            x2 = self.x + 2.0
+            GL.glUniform4f(loc_trans, x2, self.y, self.z, 1.0)
+            GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, rotation)
+            GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None)
+
 
 
             ## dessin des sommets
