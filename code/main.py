@@ -299,4 +299,15 @@ Q_5 :
 Q_25 : 
     L’opération mathématique principale est la division par w (division perspective) suivie d’un changement d’échelle pour passer de [-1, 1] à [0, width/height].
 
+Q_56 : 
+    Les coordonnées de texture (UV) en OpenGL sont normalisées entre 0.0 et 1.0.
+    Mais si on sort de cette plage, OpenGL applique un "wrap" (enroulement).
+    Cela signifie que si les coordonnées UV sont en dehors de [0, 1], elles seront répétées.
+
+Q_57 :
+    Mode	            Effet
+    GL_REPEAT	        Répète la texture (défaut)
+    GL_CLAMP_TO_EDGE	Reste figé à la dernière valeur valide
+    GL_MIRRORED_REPEAT	Répète mais miroir à chaque cycle
+    GL_CLAMP_TO_BORDER	Colore avec une couleur définie
 """
