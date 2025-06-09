@@ -73,17 +73,29 @@ class Game(object):
         pass
         
     def init_data(self):
-        #sommets
+        #sommets triangles
         p1 = (0, 0, 0)
         p2 = (1, 0, 0)
         p3 = (0, 1, 0)
         p4 = (0, 0, 1)
 
-        #normales
+        #normales triangles
         n1 = (0.0, 0.0, 1.0)
         n2 = (-0.5774, -0.5774, -0.5774)
         n3 = (-0.5774, -0.5774, -0.5774)
         n4 = (-0.5, -0.5, 0.707)    
+
+        #sommets floor
+        p5 = (0, 0, 0)
+        p6 = (1, 0, 0)
+        p7 = (0, 0, 1)
+        p8 = (1, 0, 1)
+
+        #normales floor
+        n5 = (0.0, 1.0, 0.0)
+        n6 = (0.0, 1.0, 0.0)
+        n7 = (0.0, 1.0, 0.0)
+        n8 = (0.0, 1.0, 0.0)
 
         # couleurs
         rouge = (1, 0, 0)
@@ -91,23 +103,56 @@ class Game(object):
         bleu = (0, 0, 1)
         jaune = (1, 1, 0)
 
-        #uv (les coordonnées de texture)
+        #uv (les coordonnées de texture) 
         uv0, uv1, uv2, uv3 = np.array((0, 0), np.float32), np.array((1, 0), np.float32), np.array((0, 1), np.float32), np.array((1, 1), np.float32)
 
+        uv4, uv5, uv6, uv7 = np.array((0, 0), np.float32), np.array((1, 0), np.float32), np.array((0, 1), np.float32), np.array((1, 1), np.float32)
 
         sommets = np.array([
                 *p1, *n1, *rouge, *uv0,
                 *p2, *n2, *vert,  *uv1,
                 *p3, *n3, *bleu,  *uv2,
                 *p4, *n4, *jaune, *uv3], dtype=np.float32)
+        
+        # sommets floor
+        sommets_floor = np.array([
+                *p5, *n5, *rouge, *uv4,
+                *p6, *n6, *vert,  *uv5,
+                *p7, *n7, *bleu,  *uv6,
+                *p8, *n8, *jaune, *uv7], dtype=np.float32)
 
 
         index = np.array(((0, 1, 2),(1, 3, 2),), dtype=np.uint32)
+        index_floor = np.array(((0, 1, 2),(1, 3, 2),), dtype=np.uint32)
         
         # stride : nombre d'octets entre le début de deux sommets consécutifs
-        stride = 11 * sizeof(c_float)
-       
-        
+        stride = 11 * sizeof(c_float)        
+
+        vao_floor = GL.glGenVertexArrays(1)
+        GL.glBindVertexArray(vao_floor)
+        vbo_floor = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo_floor)
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets_floor, GL.GL_STATIC_DRAW)
+        # Attribut position (location = 0)
+        GL.glEnableVertexAttribArray(0)
+        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(0))
+        # Attribut normale (location = 1)
+        GL.glEnableVertexAttribArray(1)
+        GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(3 * sizeof(c_float)))
+        # Attribut couleur (location = 2)
+        GL.glEnableVertexAttribArray(2)
+        GL.glVertexAttribPointer(2, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(6 * sizeof(c_float)))
+        # Attribut UV (location = 3)
+        GL.glEnableVertexAttribArray(3)
+        GL.glVertexAttribPointer(3, 2, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(9 * sizeof(c_float)))
+        # VBO d'indices pour le sol
+        vboi_floor = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi_floor)
+        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index_floor, GL.GL_STATIC_DRAW)
+
+             
+
+
 
         # 1. Créer le VAO
         vao = GL.glGenVertexArrays(1)
@@ -117,7 +162,7 @@ class Game(object):
         vbo = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
         GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets, GL.GL_STATIC_DRAW)
-             
+    
         # 3. Activer l'attribut position (location = 0)
         GL.glEnableVertexAttribArray(0)
         GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(0))
@@ -134,10 +179,21 @@ class Game(object):
         GL.glEnableVertexAttribArray(3)
         GL.glVertexAttribPointer(3, 2, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(9 * sizeof(c_float)))
 
-        # 6. Créer le VBO d'indices
+        # 6. Créer les VBO d'indices
         vboi = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi)
         GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index, GL.GL_STATIC_DRAW)
+
+        vboi_floor = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi_floor)
+        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index_floor, GL.GL_STATIC_DRAW)
+
+        self.vao_obj = vao
+        self.vao_floor = vao_floor
+
+        self.nb_indices_obj = len(index.flatten())
+        self.nb_indices_floor = len(index_floor.flatten())
+
 
         pass
 
@@ -217,7 +273,7 @@ class Game(object):
             loc_rot = GL.glGetUniformLocation(prog, "rotation")
             if loc_rot  == -1 :
                 print("Pas de variable uniforme : rotation")
-            GL.glUniformMatrix4fv(loc_rot , 1, GL.GL_FALSE, rotation)
+            GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, rotation)
 
             GL.glActiveTexture(GL.GL_TEXTURE0)
             GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture)
@@ -240,14 +296,17 @@ class Game(object):
             GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None)
 
             # Objet 3: statique (fait office de sol)
-            
+            GL.glBindVertexArray(self.vao_floor)
+            GL.glUniform4f(loc_trans, 0.0, -1.0, 0.0, 1.0)  # position fixe sous la scène
+            GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, pyrr.matrix44.create_identity())  # pas de rotation
+            GL.glDrawElements(GL.GL_TRIANGLES, self.nb_indices_floor, GL.GL_UNSIGNED_INT, None)
 
 
 
             ## dessin des sommets
             #GL.glDrawArrays(GL.GL_LINE_LOOP, 0, 3) #GL_LINE_LOOP : ne rempli pas le triangle
             #GL.glDrawArrays(GL.GL_TRIANGLES, 0, 6)
-            GL.glDrawElements(GL.GL_TRIANGLES, 2*3, GL.GL_UNSIGNED_INT, None)
+            #GL.glDrawElements(GL.GL_TRIANGLES, 2*3, GL.GL_UNSIGNED_INT, None)
             glfw.swap_buffers(self.window)
             glfw.poll_events()
 
