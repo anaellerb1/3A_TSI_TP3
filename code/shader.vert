@@ -8,7 +8,7 @@ out vec3 coordonnee_3d;
 out vec3 v_normale;
 
 
-//Un Vertex Shader minimaliste
+uniform mat4 rotation;
 uniform vec4 translation;
 uniform mat4 rotation;
 uniform mat4 projection;

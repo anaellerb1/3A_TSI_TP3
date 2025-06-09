@@ -27,6 +27,9 @@ class Game(object):
 
         self.k = 0
 
+        #projection
+        self.fov = 45
+
         self.init_context()
         self.init_programs()
 
@@ -376,7 +379,7 @@ Q_5 :
     Cela correspond à un temps d'affichage de 16.67 ms par image.
 
 Q_25 : 
-    L’opération mathématique principale est la division par w (division perspective) suivie d’un changement d’échelle pour passer de [-1, 1] à [0, width/height].
+    L’opération mathematique principale est la division par w (division perspective) suivie d’un changement d’échelle pour passer de [-1, 1] à [0, width/height].
 
 Q_56 : 
     Les coordonnées de texture (UV) en OpenGL sont normalisées entre 0.0 et 1.0.
