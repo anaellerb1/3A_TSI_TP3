@@ -86,10 +86,11 @@ class Game(object):
         n4 = (-0.5, -0.5, 0.707)    
 
         #sommets floor
-        p5 = (0, 0, 0)
-        p6 = (1, 0, 0)
-        p7 = (0, 0, 1)
-        p8 = (1, 0, 1)
+        p5 = (-5, 0, -5) # point bas gauche
+        p6 = (5, 0, -5) # point bas droit
+        p7 = (-5, 0, 5) # point haut gauche
+        p8 = (5, 0, 5)  # point haut droit
+
 
         #normales floor
         n5 = (0.0, 1.0, 0.0)
@@ -130,6 +131,18 @@ class Game(object):
 
         vao_floor = GL.glGenVertexArrays(1)
         GL.glBindVertexArray(vao_floor)
+
+        # VBO de sommets
+        vbo_floor = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo_floor)
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets_floor, GL.GL_STATIC_DRAW)
+
+        # VBO d'indices (lié AU VAO actif)
+        vboi_floor = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi_floor)
+        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index_floor, GL.GL_STATIC_DRAW)
+
+
         vbo_floor = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo_floor)
         GL.glBufferData(GL.GL_ARRAY_BUFFER, sommets_floor, GL.GL_STATIC_DRAW)
@@ -145,10 +158,7 @@ class Game(object):
         # Attribut UV (location = 3)
         GL.glEnableVertexAttribArray(3)
         GL.glVertexAttribPointer(3, 2, GL.GL_FLOAT, GL.GL_FALSE, stride, c_void_p(9 * sizeof(c_float)))
-        # VBO d'indices pour le sol
-        vboi_floor = GL.glGenBuffers(1)
-        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi_floor)
-        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index_floor, GL.GL_STATIC_DRAW)
+       
 
              
 
@@ -183,10 +193,6 @@ class Game(object):
         vboi = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi)
         GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index, GL.GL_STATIC_DRAW)
-
-        vboi_floor = GL.glGenBuffers(1)
-        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboi_floor)
-        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index_floor, GL.GL_STATIC_DRAW)
 
         self.vao_obj = vao
         self.vao_floor = vao_floor
@@ -285,22 +291,24 @@ class Game(object):
             GL.glUniform1i(loc_tex , 0)
 
             # Objet 1
+            GL.glBindVertexArray(self.vao_obj)  # <- bind des triangles
             GL.glUniform4f(loc_trans, self.x, self.y, self.z, 1.0)
             GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, rotation)
-            GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None)
+            GL.glDrawElements(GL.GL_TRIANGLES, self.nb_indices_obj, GL.GL_UNSIGNED_INT, None)
+
 
             # Objet 2 
-            x2 = self.x + 2.0
+            x2 = self.x + 1.0
             GL.glUniform4f(loc_trans, x2, self.y, self.z, 1.0)
             GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, rotation)
-            GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None)
+            GL.glDrawElements(GL.GL_TRIANGLES, self.nb_indices_obj, GL.GL_UNSIGNED_INT, None)
+
 
             # Objet 3: statique (fait office de sol)
             GL.glBindVertexArray(self.vao_floor)
-            GL.glUniform4f(loc_trans, 0.0, -1.0, 0.0, 1.0)  # position fixe sous la scène
-            GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, pyrr.matrix44.create_identity())  # pas de rotation
+            GL.glUniform4f(loc_trans, 0.0, -2.0, -15.0, 1.0)
+            GL.glUniformMatrix4fv(loc_rot, 1, GL.GL_FALSE, pyrr.matrix44.create_identity())
             GL.glDrawElements(GL.GL_TRIANGLES, self.nb_indices_floor, GL.GL_UNSIGNED_INT, None)
-
 
 
             ## dessin des sommets
